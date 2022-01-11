@@ -1,11 +1,11 @@
 import os
 
-os.environ["CSDHOME"] = "/home/csdfordham/CCDC/CSD_2020"
+os.environ["CSDHOME"] = "/home/qai/CCDC/CSD_2022"
 
 from chemicaldiagram import ChemicalDiagram, ChemicalDiagramFilter
 from chemicaldiagram.converter import from_csd_entry_to_diagram, export_entry
 from chemicaldiagram.utils import split_csd_formula, MetalAndMetalloids, get_identifier_header
-from ccdc.io import EntryReader, Entry
+from ccdc.io import EntryReader, Entry, csd_version
 from collections import Counter
 import json
 from tqdm import tqdm
@@ -13,6 +13,7 @@ import re
 
 """
 export first 5 amine-templated metal/metalloid oxides from CSD
+you may want to run with `-Wignore` to suppress ignore runtime error from ccdc lib
 """
 
 
@@ -193,9 +194,8 @@ if __name__ == '__main__':
     # import logging
     # logging.getLogger().setLevel(logging.INFO)
 
-    save_chunk_size = 100
-
     CSD_READER = EntryReader('CSD')
+    CSD_VERSION = csd_version()
     saved_headers = set()
 
     in_subgs, ex_subgs = ChemicalDiagramFilter.generate_subgraph_rules(RULES, metal_only=False)
@@ -206,7 +206,6 @@ if __name__ == '__main__':
     )
 
     save_list = []
-    i_save_list = 0
     for entry in tqdm(CSD_READER):
         identifier = entry.identifier
         header = get_identifier_header(identifier)
@@ -220,7 +219,4 @@ if __name__ == '__main__':
             }
             saved_headers.add(header)
             save_list.append(data)
-            if len(save_list) == save_chunk_size:
-                save_json(save_list, "oxides/{:06}.json".format(i_save_list))
-                i_save_list += 1
-                save_list = []
+    save_json(save_list, "oxides/atmo-{}.json".format(CSD_VERSION))

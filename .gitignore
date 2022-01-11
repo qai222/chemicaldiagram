@@ -147,3 +147,4 @@ cython_debug/
 out
 gen
 /deprecated/
+/examples/oxides/

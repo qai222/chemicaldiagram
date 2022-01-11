@@ -142,7 +142,10 @@ def export_entry(e: Entry) -> dict:
     d['cif_string'] = e.to_string('cif')
     attrnames = [a for a in dir(e) if not a.startswith('_')]
     for attrname in attrnames:
-        attr = getattr(e, attrname)
+        try:
+            attr = getattr(e, attrname)
+        except RuntimeError:
+            continue
         # print(attrname, type(attr))
         if not callable(attr):
             if isinstance(attr, tuple):

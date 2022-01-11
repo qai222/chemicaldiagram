@@ -5,7 +5,7 @@ Expose `ChemicalDiagram` in `CSD API` as a `networkx.Graph`.
 1. Create a conda env and install `CSD API`.
    ```bash
    conda create -n chemicaldiagram
-   conda install python==3.7  # CSD 2020 is python 3.7
+   conda install python==3.7.10  # CSD 2020 is python 3.7
    conda install -y -c <ccdc_conda_channel> Pillow six lxml numpy matplotlib
    conda install -y -c <ccdc_conda_channel> csd-python-api
    ```
