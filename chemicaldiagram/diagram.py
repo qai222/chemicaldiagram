@@ -95,9 +95,8 @@ class ChemicalDiagram:
 
     def get_formula(self):
         local_symbols = []
-        for n in self.graph.nodes:
-            if n in self.local_nodes:
-                local_symbols.append(self.symbols[n])
+        for n in self.local_nodes:
+            local_symbols.append(self.symbols[n])
         c = dict(Counter(local_symbols))
         s = ""
         for k in sorted(c.keys()):
