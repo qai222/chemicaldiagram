@@ -78,6 +78,8 @@ class ChemicalDiagram:
                 edge_poly.append(eprop["polymeric"])
             if not all(edge_poly):
                 ns.append(n)
+            elif len(self.graph.edges(n)) == 0:
+                ns.append(n)
         return ns
 
     def get_element_list(self) -> [str]:
