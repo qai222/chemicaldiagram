@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="chemicaldiagram",
-    version="0.0.1",
+    version="0.0.3",
     author="Q Ai",
     classifiers=[
         "Programming Language :: Python :: 3",
