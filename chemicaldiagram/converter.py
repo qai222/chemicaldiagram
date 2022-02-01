@@ -1,6 +1,9 @@
 import datetime
 import json
 import re
+import typing
+import pathlib
+import inspect
 
 import networkx as nx
 
@@ -140,6 +143,8 @@ def as_dict_crossref(cr: Entry.CrossReference):
 def export_entry(e: Entry) -> dict:
     d = dict()
     d['cif_string'] = e.to_string('cif')
+    d['diagram'] = from_csd_entry_to_diagram(e).as_dict()
+
     attrnames = [a for a in dir(e) if not a.startswith('_')]
     for attrname in attrnames:
         try:
@@ -163,3 +168,71 @@ def export_entry(e: Entry) -> dict:
     j = json.dumps(d, cls=ME)
     d = json.loads(j)
     return d
+
+
+class ExportedEntry:
+    def __init__(
+            self,
+            diagram: ChemicalDiagram,
+            cif_string: str,
+            formula: str,
+            has_disorder: bool,
+            chemical_name: str,
+            identifier: str,
+    ):
+        self.diagram = diagram
+        self.cif_string = cif_string
+        self.formula = formula
+        self.has_disorder = has_disorder
+        self.chemical_name = chemical_name
+        self.identifier = identifier
+
+    def __repr__(self):
+        return "Entry: {}\n\tformula: {}\n\tdiagram: {}".format(self.identifier, self.formula, self.diagram)
+
+    def __hash__(self):
+        return hash(self.identifier)
+
+    def __eq__(self, other):
+        return self.identifier == other.identifier
+
+    @classmethod
+    def from_exported_dict(cls, d):
+        diagram = ChemicalDiagram.from_dict(d["diagram"])
+        entry_data = d["entry_data"]
+        init_dict = {"diagram": diagram}
+        signature = inspect.signature(ExportedEntry)
+        for p in signature.parameters:
+            if p in init_dict:
+                continue
+            init_dict[p] = entry_data[p]
+        return cls(**init_dict)
+
+    def write_cif(self, path: typing.Union[str, pathlib.Path]):
+        with open(path, "w") as f:
+            f.write(self.cif_string)
+
+    def to_dict(self):
+        d = {"diagram": self.diagram.as_dict()}
+        signature = inspect.signature(ExportedEntry)
+        for p in signature.parameters:
+            if p in d:
+                continue
+            d[p] = getattr(self, p)
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        try:
+            diagram = ChemicalDiagram.from_dict(d["diagram"])
+        except KeyError:
+            diagram = None
+        init_dict = {"diagram": diagram}
+
+        signature = inspect.signature(ExportedEntry)
+        for p in signature.parameters:
+            if p in init_dict:
+                continue
+            init_dict[p] = d[p]
+
+        return cls(**init_dict)
