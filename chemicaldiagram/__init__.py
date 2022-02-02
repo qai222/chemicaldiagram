@@ -1,2 +1,2 @@
-from .diagram import ChemicalDiagram, BuildingUnitDiagram
+from .diagram import ChemicalDiagram, BuildingUnitDiagram, ExportedEntry
 from .filter import ChemicalDiagramFilter

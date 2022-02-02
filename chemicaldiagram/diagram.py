@@ -291,7 +291,9 @@ class ExportedEntry:
             has_disorder: bool,
             chemical_name: str,
             identifier: str,
+            publications: [dict],
     ):
+        self.publications = publications
         self.diagram = diagram
         self.cif_string = cif_string
         self.formula = formula
