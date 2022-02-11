@@ -149,6 +149,12 @@ def export_entry(e: Entry) -> dict:
         except RuntimeError:
             continue
         # print(attrname, type(attr))
+        if attrname == "molecule":
+            try:
+                smi = attr.smiles
+            except:
+                smi = None
+            d["smiles"] = smi
         if not callable(attr):
             if isinstance(attr, tuple):
                 if all(isinstance(item, Entry.CrossReference) for item in attr):

@@ -292,7 +292,9 @@ class ExportedEntry:
             chemical_name: str,
             identifier: str,
             publications: [dict],
+            smiles: str,
     ):
+        self.smiles = smiles
         self.publications = publications
         self.diagram = diagram
         self.cif_string = cif_string
